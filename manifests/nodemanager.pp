@@ -42,6 +42,7 @@ define orawls::nodemanager (
   Boolean $nodemanager_secure_listener                    = true,
   Boolean $jsse_enabled                                   = false,
   Boolean $custom_trust                                   = false,
+  Optional[String] $nodemanager_home_dir                  = undef,
   Optional[String] $trust_keystore_file                   = undef,
   Optional[String] $trust_keystore_passphrase             = undef,
   Boolean $custom_identity                                = false,
@@ -81,6 +82,10 @@ define orawls::nodemanager (
   } else {
     $nodeMgrHome = "${weblogic_home_dir}/common/nodemanager"
     $startHome   = "${weblogic_home_dir}/server/bin"
+  }
+
+  if ! ( $nodemanager_home_dir == undef ) {
+    $nodeMgrHome = "${nodemanager_home_dir}"
   }
 
   $exec_path = "${jdk_home_dir}/bin:${lookup('orawls::exec_path')}"
@@ -210,6 +215,7 @@ define orawls::nodemanager (
       content => epp('orawls/nodemgr/nodemanager.properties.epp', {
                       'weblogic_home_dir'                     => $weblogic_home_dir,
                       'jdk_home_dir'                          => $jdk_home_dir,
+                      'nodemanager_home_dir'                  => $nodemanager_home_dir,
                       'nodemanager_address'                   => $nodemanager_address,
                       'nodemanager_port'                      => $nodemanager_port,
                       'nodemanager_secure_listener'           => $nodemanager_secure_listener,
@@ -241,6 +247,7 @@ define orawls::nodemanager (
       content => epp("orawls/nodemgr/nodemanager.properties_${new_version}.epp", {
                       'domains_dir'                           => $domains_dir,
                       'domain_name'                           => $domain_name,
+                      'nodemanager_home_dir'                  => $nodemanager_home_dir,
                       'jdk_home_dir'                          => $jdk_home_dir,
                       'nodemanager_address'                   => $nodemanager_address,
                       'nodemanager_port'                      => $nodemanager_port,
